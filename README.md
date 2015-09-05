@@ -11,3 +11,7 @@ Team members:
 * Sylvester Mpangane 11241617
 
 ---
+
+Nancy is a personal assistant application. She manages your calender 
+events, making your life a whole 
+lot easier.
