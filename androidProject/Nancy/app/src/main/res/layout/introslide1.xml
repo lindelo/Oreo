@@ -2,16 +2,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/primaryColor">
+    android:background="@color/colorPrimary">
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:src="@drawable/NancyLogo"/>
+        android:src="@drawable/nancy_logo"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/welcome_hancy"
-        android:textColor=""/>
+        android:text="@string/welcome_hancy"/>
 </LinearLayout>
