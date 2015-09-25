@@ -1,8 +1,10 @@
-package imy.oreo.nancy;
+package drawable.CalenderIcon.jpg.app.src.main.java.imy.oreo.nancy;
 
 import android.content.Intent;
 import android.os.Bundle;
 import com.github.paolorotolo.appintro.AppIntro;
+
+import imy.oreo.nancy.*;
 
 
 public class TourActivity extends AppIntro {
@@ -11,9 +13,6 @@ public class TourActivity extends AppIntro {
     public void init(Bundle bundle) {
 
         addSlide(TourFragment.newInstance(R.layout.introslide1));
-        addSlide(TourFragment.newInstance(R.layout.introslide2));
-        addSlide(TourFragment.newInstance(R.layout.introslide3));
-        addSlide(TourFragment.newInstance(R.layout.introslide4));
     }
 
     @Override
@@ -31,7 +30,7 @@ public class TourActivity extends AppIntro {
 
     private void goToMainActivity() {
 
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        Intent intent = new Intent(getApplicationContext(), imy.oreo.nancy.MainActivity.class);
         startActivity(intent);
     }
 }
