@@ -1,4 +1,3 @@
-<!--Defines the welocm introduction slider for the nancy application-->
 <resources>
     <string name="app_name">Nancy</string>
 
