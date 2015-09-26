@@ -19,7 +19,7 @@
                     android:layout_gravity="center"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
-                    android:src="@drawable/clockIcon"/>
+                    android:src="@drawable/clock_icon"/>
     </LinearLayout>
 
     <LinearLayout

@@ -19,7 +19,7 @@ android:layout_weight="10">
         android:layout_gravity="center"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
-        android:src="@drawable/facebookShare"/>
+        android:src="@drawable/facebook_share"/>
 </LinearLayout>
 
 <LinearLayout

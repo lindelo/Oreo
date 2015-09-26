@@ -9,7 +9,7 @@
     <LinearLayout
         android:id="@+id/container"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_alignParentTop="true"
         android:orientation="vertical">
 
@@ -17,6 +17,47 @@
             android:id="@+id/toolbar"
             layout="@layout/toolbar" />
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:src="@drawable/watermark"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="No Data Available"
+                android:textSize="32sp"
+                android:layout_gravity="center_horizontal"
+                android:textColor="#c0c0c0"/>
+
+        </LinearLayout>
+
     </LinearLayout>
+
+    <com.melnykov.fab.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/favorite"
+        android:layout_alignBottom="@+id/container"
+        android:background="@color/colorPrimary"
+        android:layout_marginRight="32dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="25dp"
+        fab:fab_colorNormal="@color/colorAccent"
+        android:src="@mipmap/ic_action_new"
+        android:onClick="toCreateTask"/>
 
 </RelativeLayout>
