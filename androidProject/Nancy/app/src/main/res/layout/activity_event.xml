@@ -63,10 +63,9 @@
         android:id="@+id/actions_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="30dp"
         android:stackFromBottom="true"
         android:layout_below="@+id/done"
-        android:padding="25dp"
         android:divider="@null"/>
 
 

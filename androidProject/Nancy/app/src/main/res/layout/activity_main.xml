@@ -22,11 +22,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:stackFromBottom="true"
-            android:layout_below="@+id/done"
-            android:paddingLeft="25dp"
-            android:paddingRight="25dp"
-            android:clickable="true"
             android:dividerHeight="1.0dp"/>
 
         <LinearLayout

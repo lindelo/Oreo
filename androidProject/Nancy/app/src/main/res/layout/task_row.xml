@@ -3,6 +3,8 @@
 android:orientation="vertical" android:layout_width="match_parent"
 android:layout_height="wrap_content"
 android:gravity="center"
+    android:paddingLeft="25dp"
+    android:paddingRight="25dp"
 android:paddingTop="10dp"
 android:paddingBottom="10dp">
 
@@ -40,7 +42,7 @@ android:paddingBottom="10dp">
             android:layout_marginRight="10dp"
             android:textColor="#111"/>
 
-        <ImageButton
+       <!-- <ImageButton
             android:id="@+id/task_src"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -52,6 +54,7 @@ android:paddingBottom="10dp">
             android:layout_alignRight="@+id/task_content"
             android:src = "@mipmap/ic_action_alarms"
             android:background="@null"
-            />
+            android:focusable="false"
+            android:focusableInTouchMode="false" />-->
     </RelativeLayout>
 </LinearLayout>

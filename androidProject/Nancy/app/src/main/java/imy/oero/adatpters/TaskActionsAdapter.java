@@ -25,6 +25,16 @@ public class TaskActionsAdapter extends BaseAdapter {
         this.actionList = actionList;
     }
 
+    public void remove(int position) {
+
+        actionList.remove(position);
+    }
+
+    public boolean isEmpty() {
+
+        return  actionList.isEmpty();
+    }
+
     @Override
     public int getCount() {
         return actionList.size();
@@ -51,12 +61,12 @@ public class TaskActionsAdapter extends BaseAdapter {
         TextView title = (TextView) convertView.findViewById(R.id.task_content);
         TextView date = (TextView) convertView.findViewById(R.id.task_date);
         TextView time = (TextView) convertView.findViewById(R.id.task_time);
-        ImageView src = (ImageView) convertView.findViewById(R.id.task_src);
+        //ImageView src = (ImageView) convertView.findViewById(R.id.task_src);
 
         title.setText(action.getTitle());
         date.setText(action.getDate());
         time.setText(action.getTime());
-        src.setImageResource(action.getSrc());
+        //src.setImageResource(action.getSrc());
 
         return convertView;
     }
