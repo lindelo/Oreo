@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.parse.*;
 
 import imy.oero.adatpters.ActionsAdapter;
 import imy.oero.adatpters.TaskActionsAdapter;
@@ -27,6 +28,14 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Parse.initialize(this, "kklfSNNgmK7kCdlIxzYzMHK7f6PZXbWhDkU0I2Q8", "zShNGOBu2cMzoiqhEWOW8PSue4K8pXNkgtm140Ow");
+        ParseObject myEvent = new ParseObject("Events");
+        myEvent.put("Task", "Maria's surprise birthday party.");
+        myEvent.put("Date", "2025-03-25");
+        myEvent.put("Time", "17:09");
+        myEvent.saveInBackground();
+
         setContentView(R.layout.activity_main);
 
         Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
