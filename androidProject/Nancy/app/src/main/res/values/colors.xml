@@ -1,5 +1,5 @@
-<!--Defines used colours for the nancy application-->
 <?xml version="1.0" encoding="utf-8"?>
+<!--Defines used colours for the nancy application-->
 <resources>
     <color name="grey">#cccccc</color>
     <color name="colorPrimary">#f44336</color>
