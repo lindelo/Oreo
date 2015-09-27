@@ -18,16 +18,19 @@ public class TourActivity extends AppIntro {
 
     @Override
     public void onSkipPressed() {
+
         goToMainActivity();
     }
 
     @Override
     public void onDonePressed() {
+
         goToMainActivity();
 
     }
 
     private void goToMainActivity() {
+
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(intent);
     }

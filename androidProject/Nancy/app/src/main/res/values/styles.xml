@@ -1,5 +1,5 @@
 <resources>
-<!--Defines the custom styling for the nancy application-->
+
     <style name="IntroTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
     </style>

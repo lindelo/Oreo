@@ -8,13 +8,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 
-public class TourFragment extends Fragment 
-{
+public class TourFragment extends Fragment {
     private static final String ARG_LAYOUT_RES_ID = "layoutResId";
     private int layoutResId;
 
-    public static TourFragment newInstance(int layoutResId) 
-	{
+    public static TourFragment newInstance(int layoutResId) {
         TourFragment fragSlide = new TourFragment();
 
         Bundle args = new Bundle();
@@ -25,8 +23,7 @@ public class TourFragment extends Fragment
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) 
-    {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         if(getArguments() != null && getArguments().containsKey(ARG_LAYOUT_RES_ID))
@@ -35,8 +32,7 @@ public class TourFragment extends Fragment
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) 
-    {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(layoutResId, container, false);
     }
 }

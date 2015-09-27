@@ -17,13 +17,27 @@
             android:id="@+id/toolbar"
             layout="@layout/toolbar" />
 
+        <ListView
+            android:id="@+id/task_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:stackFromBottom="true"
+            android:layout_below="@+id/done"
+            android:paddingLeft="25dp"
+            android:paddingRight="25dp"
+            android:clickable="true"
+            android:dividerHeight="1.0dp"/>
+
         <LinearLayout
+            android:id="@+id/empty"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:gravity="center">
 
             <ImageView
+                android:id="@+id/empty_src"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -32,6 +46,7 @@
                 android:src="@drawable/watermark"/>
 
             <TextView
+                android:id="@+id/empty_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
