@@ -14,8 +14,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.parse.Parse;
-import com.parse.ParseObject;
 import com.wdullaer.swipeactionadapter.SwipeActionAdapter;
 import com.wdullaer.swipeactionadapter.SwipeDirections;
 
@@ -24,11 +22,11 @@ import java.util.List;
 
 import imy.oero.adatpters.ActionsAdapter;
 import imy.oero.adatpters.TaskActionsAdapter;
-
+import com.parse.*;
 
 public class MainActivity extends ActionBarActivity {
     private TaskActionsAdapter taskActionsAdapter;
-    private List<TaskAction> actionList;
+    private List<TaskAction> actionList; //holds EVENTS
     private ListView listView;
     private SwipeActionAdapter mAdapter;
 
@@ -37,13 +35,6 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //Parse.initialize(this, "kklfSNNgmK7kCdlIxzYzMHK7f6PZXbWhDkU0I2Q8", "zShNGOBu2cMzoiqhEWOW8PSue4K8pXNkgtm140Ow");
-        //ParseObject myEvent = new ParseObject("Events");
-        //myEvent.put("Task", "Maria's surprise birthday party.");
-        //myEvent.put("Date", "2025-03-25");
-        //myEvent.put("Time", "17:09");
-        //myEvent.saveInBackground();
-
         Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -51,17 +42,30 @@ public class MainActivity extends ActionBarActivity {
 
         listView = (ListView) findViewById(R.id.task_list);
         actionList = new ArrayList<>();
+        Parse.initialize(this, "kklfSNNgmK7kCdlIxzYzMHK7f6PZXbWhDkU0I2Q8", "zShNGOBu2cMzoiqhEWOW8PSue4K8pXNkgtm140Ow");
+//added here
 
-        TaskAction duedate = new TaskAction("gfhcfgcgfcgfcgfgfgffgfdgfd", "23 Jun","13:38", R.mipmap.ic_action_expand);
-        TaskAction alarm = new TaskAction("Reminderhjhjvb", "21 Jul","13:30",R.mipmap.ic_action_expand);
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Events");
 
-        actionList.add(duedate);
-        actionList.add(alarm);
+        query.findInBackground(new FindCallback<ParseObject>() {
+            public void done(List<ParseObject> postList, ParseException e) {
+                if (e == null) {
+                    actionList.clear();
 
+                    for (ParseObject post : postList) {
+                        TaskAction note = new TaskAction(post.getString("Task"), post.getString("Date"), post.getString("Time"), R.mipmap.ic_action_expand);
+                        actionList.add(note);
+                        Toast.makeText(getApplicationContext(), post.getString("Task"), Toast.LENGTH_LONG).show();
+                    }
+                    mAdapter.notifyDataSetChanged();
+                }
+            }
+        });
+        //end here
 
-        if(actionList.isEmpty()) {
-            listView.setVisibility(View.GONE);
-        }else
+        //if(actionList.isEmpty()) {
+            //listView.setVisibility(View.GONE);
+        //}else
         {
             final LinearLayout empty = (LinearLayout)findViewById(R.id.empty);
             final TextView title = (TextView)findViewById(R.id.empty_title);
@@ -103,6 +107,7 @@ public class MainActivity extends ActionBarActivity {
                             title.setVisibility(View.VISIBLE);
                             src.setVisibility(View.VISIBLE);
                             empty.setVisibility(View.VISIBLE);
+
                         }
 
                     }
