@@ -31,7 +31,7 @@ public class TourActivity extends AppIntro {
 
     private void goToMainActivity() {
 
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
         startActivity(intent);
     }
 }
