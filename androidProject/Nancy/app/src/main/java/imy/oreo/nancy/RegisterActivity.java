@@ -14,6 +14,8 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
+import com.parse.*;
+
 
 public class RegisterActivity extends ActionBarActivity {
 
@@ -26,6 +28,8 @@ public class RegisterActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
+        Parse.initialize(this, "kklfSNNgmK7kCdlIxzYzMHK7f6PZXbWhDkU0I2Q8", "zShNGOBu2cMzoiqhEWOW8PSue4K8pXNkgtm140Ow");
+
         Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -33,6 +37,7 @@ public class RegisterActivity extends ActionBarActivity {
         emailWrapper = (TextInputLayout)  findViewById(R.id.registerEmailWrapper);
         passwordWrapper = (TextInputLayout) findViewById(R.id.registerPasswordWrapper);
         c_passwordWrapper = (TextInputLayout) findViewById(R.id.c_registerPasswordWrapper);
+
 
         emailWrapper.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
@@ -139,6 +144,11 @@ public class RegisterActivity extends ActionBarActivity {
                     inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
 
                     //TODO register the user, creating user account
+
+                    ParseObject User = new ParseObject("NancyUsers");
+                    User.put("email", email);
+                    User.put("password", password);
+                    User.saveInBackground();
                     Toast.makeText(getApplicationContext(), email + " " + password, Toast.LENGTH_LONG).show();
                 }
                 else{

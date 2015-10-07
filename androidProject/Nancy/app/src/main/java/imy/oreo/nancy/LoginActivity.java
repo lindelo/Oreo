@@ -14,6 +14,8 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
+import com.parse.Parse;
+
 
 public class LoginActivity extends ActionBarActivity {
 
