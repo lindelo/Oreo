@@ -2,6 +2,7 @@ package imy.oreo.nancy;
 
 import android.content.Intent;
 import android.os.Message;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -9,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -31,6 +33,9 @@ public class EventActivity extends ActionBarActivity
     private ActionsAdapter actionsAdapter;
     private List<Action> actionList;
     private ListView listView;
+    private String mDate = "Today";
+    private String mTime = null;
+    private String mTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,6 +114,8 @@ public class EventActivity extends ActionBarActivity
         Action action = (Action) actionsAdapter.getItem(0);
         action.setSubtitle(dayOfMonth+"/"+(monthOfYear+1)+"/"+year);
 
+        mDate = dayOfMonth+"/"+(monthOfYear+1)+"/"+year;
+
         actionList.set(0, action);
         actionsAdapter = new ActionsAdapter(getApplicationContext(), actionList);
         listView.setAdapter(actionsAdapter);
@@ -122,10 +129,23 @@ public class EventActivity extends ActionBarActivity
 
         Action action = (Action) actionsAdapter.getItem(1);
         action.setSubtitle(hourOfDay+"h"+zero+minute);
+        mTime = hourOfDay+"h"+zero+minute;
 
         actionList.set(1, action);
         actionsAdapter = new ActionsAdapter(getApplicationContext(), actionList);
         listView.setAdapter(actionsAdapter);
 
+    }
+
+    public void addEvent(String task, String time, String date) {
+
+        Toast.makeText(getApplicationContext(), task + " " + time + " " + date, Toast.LENGTH_LONG).show();
+    }
+
+    public void onCreateTaskClicked(View view) {
+
+        TextInputLayout taskWrapper = (TextInputLayout)  findViewById(R.id.taskWrapper);
+        mTask = taskWrapper.getEditText().getText().toString();
+        addEvent(mTask, mTime, mDate);
     }
 }
