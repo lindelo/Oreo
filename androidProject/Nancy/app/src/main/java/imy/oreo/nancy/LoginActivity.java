@@ -14,7 +14,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
-import com.parse.Parse;
+import com.parse.*;
 
 
 public class LoginActivity extends ActionBarActivity {
@@ -114,7 +114,23 @@ public class LoginActivity extends ActionBarActivity {
                 inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
 
                 //TODO authenticate user here
-                Toast.makeText(getApplicationContext(), email + " " + password, Toast.LENGTH_LONG).show();
+                ParseUser.logInInBackground(email, password, new LogInCallback() {
+                    @Override
+                    public void done(ParseUser user, ParseException e) {
+                        setProgressBarIndeterminateVisibility(false);
+
+                        if (e == null) {
+                            // User Login is successful
+                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                            startActivity(intent);
+                        } else {
+                            // User Login Failed
+                            Toast.makeText(getApplicationContext(), "Login Failed", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+
+                //Toast.makeText(getApplicationContext(), email + " " + password, Toast.LENGTH_LONG).show();
             }
         }
     }

@@ -147,10 +147,11 @@ public class RegisterActivity extends ActionBarActivity {
 
                     //TODO register the user, creating user account
 
-                    ParseObject User = new ParseObject("NancyUsers");
-                    User.put("email", email);
-                    User.put("password", password);
-                    User.saveInBackground();
+                    ParseUser User = new ParseUser();
+                    User.setUsername(email);
+                    User.setEmail(email);
+                    User.setPassword(password);
+                    User.signUpInBackground();
                     Toast.makeText(getApplicationContext(), email + " " + password, Toast.LENGTH_LONG).show();
                 }
                 else{
