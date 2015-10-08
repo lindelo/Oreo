@@ -76,7 +76,7 @@ public class MainActivity extends ActionBarActivity {
                     }
                     mAdapter.notifyDataSetChanged();
                 }
-            }
+        }
         });
         //end here
 
@@ -193,6 +193,13 @@ public class MainActivity extends ActionBarActivity {
             return true;
         }
 
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_logout) {
+            ParseUser.logOut();
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            startActivity(intent);
+            //return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
