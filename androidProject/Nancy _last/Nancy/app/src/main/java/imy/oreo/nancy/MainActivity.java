@@ -4,7 +4,10 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,6 +28,7 @@ import java.util.List;
 
 import imy.oero.adatpters.ActionsAdapter;
 import imy.oero.adatpters.TaskActionsAdapter;
+import imy.oero.adatpters.TaskAdapter;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -32,14 +36,15 @@ public class MainActivity extends ActionBarActivity {
     private List<TaskAction> actionList;
     private ListView listView;
     private SwipeActionAdapter mAdapter;
+    RecyclerView recList;
+    TaskAdapter taskAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        InitParse.initParse(this);
-       // Parse.initialize(this, "kklfSNNgmK7kCdlIxzYzMHK7f6PZXbWhDkU0I2Q8", "zShNGOBu2cMzoiqhEWOW8PSue4K8pXNkgtm140Ow");
+        Parse.initialize(this, "kklfSNNgmK7kCdlIxzYzMHK7f6PZXbWhDkU0I2Q8", "zShNGOBu2cMzoiqhEWOW8PSue4K8pXNkgtm140Ow");
       //  ParseObject myEvent = new ParseObject("Events");
        // myEvent.put("Task", "Maria's surprise birthday party.");
        // myEvent.put("Date", "2025-03-25");
@@ -51,7 +56,13 @@ public class MainActivity extends ActionBarActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        listView = (ListView) findViewById(R.id.task_list);
+        recList = (RecyclerView) findViewById(R.id.task_list);
+
+        recList.setHasFixedSize(true);
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        recList.setLayoutManager(llm);
+
         actionList = new ArrayList<>();
 
 
@@ -69,7 +80,8 @@ public class MainActivity extends ActionBarActivity {
                         actionList.add(note);
                         Toast.makeText(getApplicationContext(), post.getString("Task"), Toast.LENGTH_LONG).show();
                     }
-                    mAdapter.notifyDataSetChanged();
+                    taskAdapter = new TaskAdapter(actionList);
+                    recList.setAdapter(taskAdapter);
                 }
             }
         });
@@ -79,14 +91,32 @@ public class MainActivity extends ActionBarActivity {
         //TaskAction duedate = new TaskAction("gfhcfgcgfcgfcgfgfgffgfdgfd", "23 Jun","13:38", R.mipmap.ic_action_expand);
         //TaskAction alarm = new TaskAction("Reminderhjhjvb", "21 Jul","13:30",R.mipmap.ic_action_expand);
 
-       // actionList.add(duedate);
+        //actionList.add(duedate);
         //actionList.add(alarm);
+
+        ItemTouchHelper swipeToDismissTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(
+                ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                // callback for drag-n-drop, false to skip this feature
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                // callback for swipe to dismiss, removing item from data and adapter
+                actionList.remove(viewHolder.getAdapterPosition());
+                taskAdapter.notifyItemRemoved(viewHolder.getAdapterPosition());
+            }
+        });
+
+        swipeToDismissTouchHelper.attachToRecyclerView(recList);
 
 
        // if(actionList.isEmpty()) {
            // listView.setVisibility(View.GONE);
         //}else
-        {
+       /* {
             final LinearLayout empty = (LinearLayout)findViewById(R.id.empty);
             final TextView title = (TextView)findViewById(R.id.empty_title);
             final ImageView src = (ImageView)findViewById(R.id.empty_src);
@@ -166,7 +196,7 @@ public class MainActivity extends ActionBarActivity {
                     }
                 }
             });
-        }
+        }*/
     }
 
     @Override
