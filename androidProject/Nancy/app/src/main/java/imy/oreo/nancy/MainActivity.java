@@ -65,9 +65,14 @@ public class MainActivity extends ActionBarActivity {
                     actionList.clear();
 
                     for (ParseObject post : postList) {
-                        TaskAction note = new TaskAction(post.getString("Task"), post.getString("Date"), post.getString("Time"), R.mipmap.ic_action_expand);
-                        actionList.add(note);
-                        Toast.makeText(getApplicationContext(), post.getString("Task"), Toast.LENGTH_LONG).show();
+
+                       // Toast.makeText(getApplicationContext(),ParseUser.getCurrentUser().getUsername()+ " " + post.get("Event_Owner"), Toast.LENGTH_LONG).show();
+
+                        if(ParseUser.getCurrentUser().getUsername().equalsIgnoreCase(post.getString("Event_Owner"))) {
+                            TaskAction note = new TaskAction(post.getString("Task"), post.getString("Date"), post.getString("Time"), R.mipmap.ic_action_expand);
+                            actionList.add(note);
+                            Toast.makeText(getApplicationContext(), post.getString("Task"), Toast.LENGTH_LONG).show();
+                        }
                     }
                     mAdapter.notifyDataSetChanged();
                 }
