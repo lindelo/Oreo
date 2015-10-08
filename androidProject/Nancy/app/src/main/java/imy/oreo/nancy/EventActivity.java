@@ -14,8 +14,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TimePicker;
 import android.widget.Toast;
-import com.parse.Parse;
-import com.parse.ParseObject;
+import com.parse.*;
 
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import com.wdullaer.materialdatetimepicker.time.RadialPickerLayout;
@@ -43,6 +42,7 @@ public class EventActivity extends ActionBarActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event);
+        InitParse.initParse(this);
 
         listView = (ListView) findViewById(R.id.actions_list);
         actionList = new ArrayList<>();
@@ -141,7 +141,7 @@ public class EventActivity extends ActionBarActivity
 
     public void addEvent(String task, String time, String date) {
 
-        Toast.makeText(getApplicationContext(), task + " " + time + " " + date, Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), task + " " + time + " " + date + " " + ParseUser.getCurrentUser() , Toast.LENGTH_LONG).show();
         //push to database
 //added here
 
@@ -149,6 +149,7 @@ public class EventActivity extends ActionBarActivity
         myEvent.put("Task", task);
         myEvent.put("Date", date);
         myEvent.put("Time", time);
+        myEvent.put("Event_Owner", ParseUser.getCurrentUser().getUsername());
         myEvent.saveInBackground();
 //end here
     }
