@@ -2,17 +2,26 @@ package imy.oreo.nancy;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.baoyz.swipemenulistview.SwipeMenu;
+import com.baoyz.swipemenulistview.SwipeMenuCreator;
+import com.baoyz.swipemenulistview.SwipeMenuItem;
+import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.parse.*;
 
 import com.parse.Parse;
@@ -32,6 +41,7 @@ public class MainActivity extends ActionBarActivity {
     private List<TaskAction> actionList;
     private ListView listView;
     private SwipeActionAdapter mAdapter;
+    private SwipeMenuListView mListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,19 +49,20 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         InitParse.initParse(this);
-       // Parse.initialize(this, "kklfSNNgmK7kCdlIxzYzMHK7f6PZXbWhDkU0I2Q8", "zShNGOBu2cMzoiqhEWOW8PSue4K8pXNkgtm140Ow");
-      //  ParseObject myEvent = new ParseObject("Events");
-       // myEvent.put("Task", "Maria's surprise birthday party.");
-       // myEvent.put("Date", "2025-03-25");
-       // myEvent.put("Time", "17:09");
-       // myEvent.saveInBackground();
-
         Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        listView = (ListView) findViewById(R.id.task_list);
+
+        final LinearLayout empty = (LinearLayout) findViewById(R.id.empty);
+        final TextView title = (TextView) findViewById(R.id.empty_title);
+        final ImageView src = (ImageView) findViewById(R.id.empty_src);
+        title.setVisibility(View.GONE);
+        src.setVisibility(View.GONE);
+        empty.setVisibility(View.GONE);
+
+        mListView = (SwipeMenuListView) findViewById(R.id.task_list);
         actionList = new ArrayList<>();
 
 
@@ -74,104 +85,113 @@ public class MainActivity extends ActionBarActivity {
                             Toast.makeText(getApplicationContext(), post.getString("Task"), Toast.LENGTH_LONG).show();
                         }
                     }
-                    mAdapter.notifyDataSetChanged();
+
+                    if(actionList.isEmpty()) {
+                        mListView.setVisibility(View.GONE);
+                        title.setVisibility(View.VISIBLE);
+                        src.setVisibility(View.VISIBLE);
+                        empty.setVisibility(View.VISIBLE);
+                    }else {
+
+                        taskActionsAdapter = new TaskActionsAdapter(getApplicationContext(),actionList);
+                        mListView.setAdapter(taskActionsAdapter);
+                    }
+
+                    //mAdapter.notifyDataSetChanged();
                 }
         }
         });
-        //end here
 
+        SwipeMenuCreator creator = new SwipeMenuCreator() {
 
-        //TaskAction duedate = new TaskAction("gfhcfgcgfcgfcgfgfgffgfdgfd", "23 Jun","13:38", R.mipmap.ic_action_expand);
-        //TaskAction alarm = new TaskAction("Reminderhjhjvb", "21 Jul","13:30",R.mipmap.ic_action_expand);
+            @Override
+            public void create(SwipeMenu menu) {
 
-       // actionList.add(duedate);
-        //actionList.add(alarm);
+                // create "delete" item
+                SwipeMenuItem editItem = new SwipeMenuItem(
+                        getApplicationContext());
+                // set item background
+                editItem.setBackground(new ColorDrawable(Color.rgb(255, 193, 7)));
+                // set item width
+                editItem.setWidth(dp2px(90));
+                // set a icon
+                editItem.setIcon(R.mipmap.ic_action_edit);
+                // add to menu
+                menu.addMenuItem(editItem);
 
+                // create "delete" item
+                SwipeMenuItem deleteItem = new SwipeMenuItem(
+                        getApplicationContext());
+                // set item background
+                deleteItem.setBackground(new ColorDrawable(Color.rgb(244,67,54)));
+                // set item width
+                deleteItem.setWidth(dp2px(90));
+                // set a icon
+                deleteItem.setIcon(R.mipmap.ic_action_delete);
+                // add to menu
+                menu.addMenuItem(deleteItem);
+            }
+        };
 
-       // if(actionList.isEmpty()) {
-           // listView.setVisibility(View.GONE);
-        //}else
-        {
-            final LinearLayout empty = (LinearLayout)findViewById(R.id.empty);
-            final TextView title = (TextView)findViewById(R.id.empty_title);
-            final ImageView src = (ImageView)findViewById(R.id.empty_src);
-            title.setVisibility(View.GONE);
-            src.setVisibility(View.GONE);
-            empty.setVisibility(View.GONE);
+        mListView.setMenuCreator(creator);
 
-            taskActionsAdapter = new TaskActionsAdapter(getApplicationContext(), actionList);
+        // step 2. listener item click event
+        mListView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
 
-            mAdapter = new SwipeActionAdapter(taskActionsAdapter);
-            mAdapter.setListView(listView);
-
-            listView.setAdapter(mAdapter);
-
-            mAdapter.addBackground(SwipeDirections.DIRECTION_FAR_LEFT, R.layout.row_bg_left_far)
-                    .addBackground(SwipeDirections.DIRECTION_NORMAL_LEFT, R.layout.row_bg_left)
-                    .addBackground(SwipeDirections.DIRECTION_FAR_RIGHT, R.layout.row_bg_right_far)
-                    .addBackground(SwipeDirections.DIRECTION_NORMAL_RIGHT, R.layout.row_bg_right);
-
-
-            mAdapter.setSwipeActionListener(new SwipeActionAdapter.SwipeActionListener() {
-                @Override
-                public boolean hasActions(int position) {
-                    // All items can be swiped
-                    return true;
+                switch (index) {
+                    case 0:
+                        break;
+                    case 1:
+                        break;
                 }
+                return false;
+            }
+        });
 
-                @Override
-                public boolean shouldDismiss(int position, int direction) {
-                    // Only dismiss an item when swiping normal left
-                    if(SwipeDirections.DIRECTION_FAR_RIGHT == direction) {
+        mListView.setSwipeDirection(SwipeMenuListView.DIRECTION_RIGHT);
 
-                       TaskActionsAdapter taskActionsAdapter = (TaskActionsAdapter) mAdapter.getAdapter();
-                        taskActionsAdapter.remove(position);
+        // Left
+        mListView.setSwipeDirection(SwipeMenuListView.DIRECTION_LEFT);
 
-                        if(taskActionsAdapter.isEmpty()) {
-                            listView.setVisibility(View.GONE);
-                            title.setVisibility(View.VISIBLE);
-                            src.setVisibility(View.VISIBLE);
-                            empty.setVisibility(View.VISIBLE);
-                        }
+        // set SwipeListener
+        mListView.setOnSwipeListener(new SwipeMenuListView.OnSwipeListener() {
 
-                    }
+            @Override
+            public void onSwipeStart(int position) {
+                // swipe start
+            }
 
-                    if(SwipeDirections.DIRECTION_FAR_LEFT == direction) {
+            @Override
+            public void onSwipeEnd(int position) {
+                // swipe end
+            }
+        });
 
-                       Intent intent = new Intent(getApplicationContext(), EventActivity.class);
-                        startActivity(intent);
+        // set MenuStateChangeListener
+        mListView.setOnMenuStateChangeListener(new SwipeMenuListView.OnMenuStateChangeListener() {
+            @Override
+            public void onMenuOpen(int position) {
+            }
 
-                    }
+            @Override
+            public void onMenuClose(int position) {
+            }
+        });
 
-                    return direction == SwipeDirections.DIRECTION_FAR_LEFT;
-                }
+        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
-                @Override
-                public void onSwipe(int[] positionList, int[] directionList) {
-                    for (int i = 0; i < positionList.length; i++) {
-                        int direction = directionList[i];
-                        int position = positionList[i];
-                        String dir = "";
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view,
+                                           int position, long id) {
+                Toast.makeText(getApplicationContext(), position + " long click", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        });
 
-                        switch (direction) {
-                            case SwipeDirections.DIRECTION_FAR_LEFT:
-                                dir = "Far left";
-                                break;
-                            case SwipeDirections.DIRECTION_NORMAL_LEFT:
-                                dir = "Left";
-                                break;
-                            case SwipeDirections.DIRECTION_FAR_RIGHT:
-                                dir = "Far right";
-                                break;
-                            case SwipeDirections.DIRECTION_NORMAL_RIGHT:
-                                dir = "Right";
-                                break;
-                        }
-                        mAdapter.notifyDataSetChanged();
-                    }
-                }
-            });
-        }
+
+
     }
 
     @Override
@@ -207,5 +227,10 @@ public class MainActivity extends ActionBarActivity {
 
         Intent intent = new Intent(getApplicationContext(), EventActivity.class);
         startActivity(intent);
+    }
+
+    private int dp2px(int dp) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
+                getResources().getDisplayMetrics());
     }
 }
