@@ -59,4 +59,9 @@ public class ActionsAdapter extends BaseAdapter {
 
         return convertView;
     }
+
+    public void setItem(int position, Action item) {
+
+        actionList.set(position, item);
+    }
 }

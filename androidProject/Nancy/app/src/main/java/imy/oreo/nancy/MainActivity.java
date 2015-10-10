@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,9 +40,8 @@ import imy.oero.adatpters.TaskActionsAdapter;
 public class MainActivity extends ActionBarActivity {
     private TaskActionsAdapter taskActionsAdapter;
     private List<TaskAction> actionList;
-    private ListView listView;
-    private SwipeActionAdapter mAdapter;
     private SwipeMenuListView mListView;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +54,7 @@ public class MainActivity extends ActionBarActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+        progressBar = (ProgressBar) findViewById(R.id.progressbar);
 
         final LinearLayout empty = (LinearLayout) findViewById(R.id.empty);
         final TextView title = (TextView) findViewById(R.id.empty_title);
@@ -80,12 +81,13 @@ public class MainActivity extends ActionBarActivity {
                        // Toast.makeText(getApplicationContext(),ParseUser.getCurrentUser().getUsername()+ " " + post.get("Event_Owner"), Toast.LENGTH_LONG).show();
 
                         if(ParseUser.getCurrentUser().getUsername().equalsIgnoreCase(post.getString("Event_Owner"))) {
-                            TaskAction note = new TaskAction(post.getString("Task"), post.getString("Date"), post.getString("Time"), R.mipmap.ic_action_expand);
+                            TaskAction note = new TaskAction(post.getObjectId(), post.getString("Task"), post.getString("Date"), post.getString("Time"), R.mipmap.ic_action_expand);
                             actionList.add(note);
-                            Toast.makeText(getApplicationContext(), post.getString("Task"), Toast.LENGTH_LONG).show();
                         }
                     }
 
+                    progressBar.setVisibility(View.GONE);
+                    
                     if(actionList.isEmpty()) {
                         mListView.setVisibility(View.GONE);
                         title.setVisibility(View.VISIBLE);
@@ -142,8 +144,10 @@ public class MainActivity extends ActionBarActivity {
 
                 switch (index) {
                     case 0:
+                        edit(position);
                         break;
                     case 1:
+                        delete(position);
                         break;
                 }
                 return false;
@@ -153,7 +157,7 @@ public class MainActivity extends ActionBarActivity {
         mListView.setSwipeDirection(SwipeMenuListView.DIRECTION_RIGHT);
 
         // Left
-        mListView.setSwipeDirection(SwipeMenuListView.DIRECTION_LEFT);
+        //mListView.setSwipeDirection(SwipeMenuListView.DIRECTION_LEFT);
 
         // set SwipeListener
         mListView.setOnSwipeListener(new SwipeMenuListView.OnSwipeListener() {
@@ -233,4 +237,26 @@ public class MainActivity extends ActionBarActivity {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
                 getResources().getDisplayMetrics());
     }
+
+    private void edit(int position) {
+
+        TaskAction action = (TaskAction) taskActionsAdapter.getItem(position);
+
+        Intent intent = new Intent(getApplicationContext(), EditActivity.class);
+        intent.putExtra("Event.title", action.getTitle());
+        intent.putExtra("Event.date", action.getDate());
+        intent.putExtra("Event.time", action.getTime());
+        intent.putExtra("Event.id", action.getId());
+        startActivity(intent);
+    }
+
+    private void delete(int position) {
+
+
+        TaskAction taskAction  = (TaskAction) taskActionsAdapter.getItem(position);
+        ParseObject.createWithoutData("Events", taskAction.getId()).deleteEventually();
+        taskActionsAdapter.remove(position);
+        taskActionsAdapter.notifyDataSetChanged();
+    }
+
 }

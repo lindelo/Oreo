@@ -2,6 +2,8 @@ package imy.oreo.nancy;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -12,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.parse.*;
@@ -21,6 +24,7 @@ public class LoginActivity extends ActionBarActivity {
 
     private TextInputLayout emailWrapper;
     private TextInputLayout passwordWrapper;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +36,9 @@ public class LoginActivity extends ActionBarActivity {
         Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        progressBar = (ProgressBar) findViewById(R.id.progressbar);
+        progressBar.setVisibility(View.GONE);
 
         emailWrapper = (TextInputLayout)  findViewById(R.id.loginEmailWrapper);
         passwordWrapper = (TextInputLayout) findViewById(R.id.loginPasswordWrapper);
@@ -113,19 +120,22 @@ public class LoginActivity extends ActionBarActivity {
                         Activity.INPUT_METHOD_SERVICE);
                 inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
 
+                progressBar.setVisibility(View.VISIBLE);
                 //TODO authenticate user here
                 ParseUser.logInInBackground(email, password, new LogInCallback() {
                     @Override
                     public void done(ParseUser user, ParseException e) {
                         setProgressBarIndeterminateVisibility(false);
 
+                        progressBar.setVisibility(View.GONE);
                         if (e == null) {
                             // User Login is successful
                             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                             startActivity(intent);
                         } else {
                             // User Login Failed
-                            Toast.makeText(getApplicationContext(), "Login Failed", Toast.LENGTH_LONG).show();
+                            CoordinatorLayout coordinatorLayout =  (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
+                            Snackbar.make(coordinatorLayout, "Invalid Email or Password", Snackbar.LENGTH_LONG).show();
                         }
                     }
                 });

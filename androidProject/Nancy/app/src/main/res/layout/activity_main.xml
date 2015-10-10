@@ -70,4 +70,12 @@
         android:src="@mipmap/ic_action_new"
         android:onClick="toCreateTask"/>
 
+    <ProgressBar
+        android:id="@+id/progressbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:indeterminateDrawable="@drawable/progress_bar" />
+
 </RelativeLayout>

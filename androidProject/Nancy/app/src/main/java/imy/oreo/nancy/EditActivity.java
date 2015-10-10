@@ -12,7 +12,6 @@ import android.widget.AdapterView;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TimePicker;
 import android.widget.Toast;
 import com.parse.*;
@@ -28,7 +27,7 @@ import java.util.List;
 import imy.oero.adatpters.ActionsAdapter;
 
 
-public class EventActivity extends ActionBarActivity
+public class EditActivity extends ActionBarActivity
         implements TimePickerDialog.OnTimeSetListener,
         DatePickerDialog.OnDateSetListener {
 
@@ -38,18 +37,29 @@ public class EventActivity extends ActionBarActivity
     private String mDate = "Today";
     private String mTime = "23h59";
     private String mTask;
+    private String eventId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_event);
+        setContentView(R.layout.activity_edit);
         InitParse.initParse(this);
+
+        Intent intent = getIntent();
+
+        eventId = intent.getStringExtra("Event.id");
+        String title = intent.getStringExtra("Event.title");
+        String date = intent.getStringExtra("Event.date");
+        String time = intent.getStringExtra("Event.time");
 
         listView = (ListView) findViewById(R.id.actions_list);
         actionList = new ArrayList<>();
 
-        Action duedate = new Action("Due Date", "Today", R.mipmap.ic_action_go_to_today);
-        Action alarm = new Action("Reminder", "23h39", R.mipmap.ic_action_alarms);
+        TextInputLayout taskWrapper = (TextInputLayout)  findViewById(R.id.taskWrapper);
+        taskWrapper.getEditText().setText(title);
+
+        Action duedate = new Action("Due Date", date, R.mipmap.ic_action_go_to_today);
+        Action alarm = new Action("Reminder", time, R.mipmap.ic_action_alarms);
 
         actionList.add(duedate);
         actionList.add(alarm);
@@ -65,7 +75,7 @@ public class EventActivity extends ActionBarActivity
 
                 if (position == 0) {
                     Calendar now = Calendar.getInstance();
-                    DatePickerDialog dpd = DatePickerDialog.newInstance(EventActivity.this,
+                    DatePickerDialog dpd = DatePickerDialog.newInstance(EditActivity.this,
                             now.get(Calendar.YEAR),
                             now.get(Calendar.MONTH),
                             now.get(Calendar.DAY_OF_MONTH)
@@ -75,7 +85,7 @@ public class EventActivity extends ActionBarActivity
 
                 if (position == 1) {
                     Calendar now = Calendar.getInstance();
-                    TimePickerDialog tpd = TimePickerDialog.newInstance(EventActivity.this,
+                    TimePickerDialog tpd = TimePickerDialog.newInstance(EditActivity.this,
                             now.get(Calendar.HOUR_OF_DAY),
                             now.get(Calendar.MINUTE),
                             true
@@ -85,8 +95,6 @@ public class EventActivity extends ActionBarActivity
                 }
             }
         });
-
-
     }
 
     @Override
@@ -140,29 +148,34 @@ public class EventActivity extends ActionBarActivity
 
     }
 
-    public void addEvent(String task, String time, String date) {
+    public void editEvent(String task, String time, String date) {
 
-        Toast.makeText(getApplicationContext(), task + " " + time + " " + date + " " + ParseUser.getCurrentUser() , Toast.LENGTH_LONG).show();
-        //push to database
-//added here
+        ParseObject myEvent = ParseObject.createWithoutData("Events", eventId);
 
-        ParseObject myEvent = new ParseObject("Events");
         myEvent.put("Task", task);
         myEvent.put("Date", date);
         myEvent.put("Time", time);
         myEvent.put("Event_Owner", ParseUser.getCurrentUser().getUsername());
-        myEvent.saveInBackground();
-//end here
+
+        myEvent.saveInBackground(new SaveCallback() {
+            public void done(ParseException e) {
+                if (e == null) {
+                    // Saved successfully.
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(intent);
+                } else {
+                    // The save failed.
+                }
+            }
+        });
+
     }
 
-    public void onCreateTaskClicked(View view) {
+    public void onEditTaskClicked(View view) {
 
         TextInputLayout taskWrapper = (TextInputLayout)  findViewById(R.id.taskWrapper);
         mTask = taskWrapper.getEditText().getText().toString();
-        addEvent(mTask, mTime, mDate);
-
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        startActivity(intent);
+        editEvent(mTask, mTime, mDate);
     }
 
 }

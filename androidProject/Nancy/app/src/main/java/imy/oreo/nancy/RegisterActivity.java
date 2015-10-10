@@ -2,6 +2,8 @@ package imy.oreo.nancy;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -12,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.parse.*;
@@ -22,6 +25,8 @@ public class RegisterActivity extends ActionBarActivity {
     private TextInputLayout emailWrapper;
     private TextInputLayout passwordWrapper;
     private TextInputLayout c_passwordWrapper;
+    private ProgressBar progressBar;
+
     private InitParse connection;
 
     @Override
@@ -35,6 +40,9 @@ public class RegisterActivity extends ActionBarActivity {
         Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        progressBar = (ProgressBar) findViewById(R.id.progressbar);
+        progressBar.setVisibility(View.GONE);
 
         emailWrapper = (TextInputLayout)  findViewById(R.id.registerEmailWrapper);
         passwordWrapper = (TextInputLayout) findViewById(R.id.registerPasswordWrapper);
@@ -147,12 +155,28 @@ public class RegisterActivity extends ActionBarActivity {
 
                     //TODO register the user, creating user account
 
+                    progressBar.setVisibility(View.VISIBLE);
+
                     ParseUser User = new ParseUser();
                     User.setUsername(email);
                     User.setEmail(email);
                     User.setPassword(password);
-                    User.signUpInBackground();
-                    Toast.makeText(getApplicationContext(), email + " " + password, Toast.LENGTH_LONG).show();
+                    User.signUpInBackground(new SignUpCallback() {
+                        public void done(ParseException e) {
+
+                            progressBar.setVisibility(View.GONE);
+                            if (e == null) {
+
+                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                startActivity(intent);
+
+                            } else {
+
+                                CoordinatorLayout coordinatorLayout =  (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
+                                Snackbar.make(coordinatorLayout, "Provided email already registered", Snackbar.LENGTH_LONG).show();
+                            }
+                        }
+                    });
                 }
                 else{
                     c_passwordWrapper.getEditText().setError("Password does not match");
