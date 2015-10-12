@@ -18,7 +18,7 @@
             android:layout_gravity="center"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
-            android:src="@drawable/home_logo"/>
+            android:src="@drawable/assistant"/>
     </LinearLayout>
 
     <LinearLayout

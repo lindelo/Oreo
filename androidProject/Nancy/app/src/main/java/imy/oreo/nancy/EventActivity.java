@@ -49,7 +49,7 @@ public class EventActivity extends ActionBarActivity
         actionList = new ArrayList<>();
 
         Action duedate = new Action("Due Date", "Today", R.mipmap.ic_action_go_to_today);
-        Action alarm = new Action("Reminder", "23h39", R.mipmap.ic_action_alarms);
+        Action alarm = new Action("Reminder", "23h59", R.mipmap.ic_action_alarms);
 
         actionList.add(duedate);
         actionList.add(alarm);
@@ -142,10 +142,6 @@ public class EventActivity extends ActionBarActivity
 
     public void addEvent(String task, String time, String date) {
 
-        Toast.makeText(getApplicationContext(), task + " " + time + " " + date + " " + ParseUser.getCurrentUser() , Toast.LENGTH_LONG).show();
-        //push to database
-//added here
-
         ParseObject myEvent = new ParseObject("Events");
         myEvent.put("Task", task);
         myEvent.put("Date", date);
@@ -161,6 +157,7 @@ public class EventActivity extends ActionBarActivity
         mTask = taskWrapper.getEditText().getText().toString();
         addEvent(mTask, mTime, mDate);
 
+        finish();
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(intent);
     }

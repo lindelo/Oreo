@@ -22,4 +22,5 @@
     <string name="pass_hint">Password must be at least 6 characters log </string>
     <string name="empty_input_error_message">Please fill out this field.</string>
     <string name="title_activity_edit">EditActivity</string>
+    <string name="title_activity_due_tasks">DueTasksActivity</string>
 </resources>

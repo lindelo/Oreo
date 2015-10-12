@@ -1,7 +1,6 @@
 package imy.oreo.nancy;
 
 import android.app.AlarmManager;
-import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -17,7 +16,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,23 +24,22 @@ import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuCreator;
 import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
-import com.parse.*;
-
-import com.parse.Parse;
+import com.parse.FindCallback;
+import com.parse.ParseException;
 import com.parse.ParseObject;
-import com.wdullaer.swipeactionadapter.SwipeActionAdapter;
-import com.wdullaer.swipeactionadapter.SwipeDirections;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 import imy.broadcastreceiver.AlarmReceiver;
-import imy.oero.adatpters.ActionsAdapter;
 import imy.oero.adatpters.TaskActionsAdapter;
 
 
-public class MainActivity extends ActionBarActivity {
+public class DueTasksActivity extends ActionBarActivity {
+
     private TaskActionsAdapter taskActionsAdapter;
     private List<TaskAction> actionList;
     private SwipeMenuListView mListView;
@@ -51,28 +48,17 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_due_tasks);
 
         InitParse.initParse(this);
         Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        progressBar = (ProgressBar) findViewById(R.id.progressbar);
+        progressBar = (ProgressBar) findViewById(R.id.progressbar);;
 
-        final LinearLayout empty = (LinearLayout) findViewById(R.id.empty);
-        final TextView title = (TextView) findViewById(R.id.empty_title);
-        final ImageView src = (ImageView) findViewById(R.id.empty_src);
-        title.setVisibility(View.GONE);
-        src.setVisibility(View.GONE);
-        empty.setVisibility(View.GONE);
-
-        mListView = (SwipeMenuListView) findViewById(R.id.task_list);
+        mListView = (SwipeMenuListView) findViewById(R.id.due_task_list);
         actionList = new ArrayList<>();
-
-
-        //added here
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Events");
 
@@ -81,33 +67,43 @@ public class MainActivity extends ActionBarActivity {
                 if (e == null) {
                     actionList.clear();
 
+                    Calendar calendar = Calendar.getInstance();
+
                     for (ParseObject post : postList) {
-
-                       // Toast.makeText(getApplicationContext(),ParseUser.getCurrentUser().getUsername()+ " " + post.get("Event_Owner"), Toast.LENGTH_LONG).show();
-
                         if(ParseUser.getCurrentUser().getUsername().equalsIgnoreCase(post.getString("Event_Owner"))) {
-                            TaskAction note = new TaskAction(post.getObjectId(), post.getString("Task"), post.getString("Date"), post.getString("Time"), R.mipmap.ic_action_expand);
-                            actionList.add(note);
-                            setAlarm(post.getString("Date"), post.getString("Time"));
+
+                            String[] timeparts = post.getString("Time").split("h");
+                            Calendar taskCalendar = (Calendar) calendar.clone();
+                            taskCalendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(timeparts[0]));
+                            taskCalendar.set(Calendar.MINUTE, Integer.parseInt(timeparts[1]));
+                            taskCalendar.set(Calendar.SECOND, 0);
+                            taskCalendar.set(Calendar.MILLISECOND, 0);
+
+                            if(!post.getString("Date").equals("Today")) {
+
+                                String[] dateparts = post.getString("Date").split("/");
+                                taskCalendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateparts[0]));
+                                taskCalendar.set(Calendar.MONTH, Integer.parseInt(dateparts[1]));
+                                taskCalendar.set(Calendar.YEAR, Integer.parseInt(dateparts[2]));
+                            }
+
+                            if(taskCalendar.compareTo(calendar) <= 0) {
+
+
+                                TaskAction note = new TaskAction(post.getObjectId(), post.getString("Task"), post.getString("Date"), post.getString("Time"), R.mipmap.ic_action_expand);
+                                actionList.add(note);
+                            }
+
+
                         }
                     }
 
                     progressBar.setVisibility(View.GONE);
+                    taskActionsAdapter = new TaskActionsAdapter(getApplicationContext(),actionList);
+                    mListView.setAdapter(taskActionsAdapter);
 
-                    if(actionList.isEmpty()) {
-                        mListView.setVisibility(View.GONE);
-                        title.setVisibility(View.VISIBLE);
-                        src.setVisibility(View.VISIBLE);
-                        empty.setVisibility(View.VISIBLE);
-                    }else {
-
-                        taskActionsAdapter = new TaskActionsAdapter(getApplicationContext(),actionList);
-                        mListView.setAdapter(taskActionsAdapter);
-                    }
-
-                    //mAdapter.notifyDataSetChanged();
                 }
-        }
+            }
         });
 
         SwipeMenuCreator creator = new SwipeMenuCreator() {
@@ -195,7 +191,7 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view,
                                            int position, long id) {
-                Toast.makeText(getApplicationContext(), position + " long click", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), position + " long click", Toast.LENGTH_SHORT).show();
                 return false;
             }
         });
@@ -207,7 +203,7 @@ public class MainActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_due_tasks, menu);
         return true;
     }
 
@@ -220,6 +216,7 @@ public class MainActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+           updateList();
             return true;
         }
 
@@ -234,10 +231,10 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void toCreateTask(View view) {
+    public void doneTask(View view) {
 
         finish();
-        Intent intent = new Intent(getApplicationContext(), EventActivity.class);
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(intent);
     }
 
@@ -250,7 +247,6 @@ public class MainActivity extends ActionBarActivity {
 
         TaskAction action = (TaskAction) taskActionsAdapter.getItem(position);
 
-        finish();
         Intent intent = new Intent(getApplicationContext(), EditActivity.class);
         intent.putExtra("Event.title", action.getTitle());
         intent.putExtra("Event.date", action.getDate());
@@ -268,30 +264,55 @@ public class MainActivity extends ActionBarActivity {
         taskActionsAdapter.notifyDataSetChanged();
     }
 
-    private void setAlarm(String date, String time) {
 
-        Calendar targetCal = Calendar.getInstance();
+    void updateList() {
 
-        String[] timeparts = time.split("h");
-        targetCal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(timeparts[0]));
-        targetCal.set(Calendar.MINUTE, Integer.parseInt(timeparts[1]));
-        targetCal.set(Calendar.SECOND, 0);
-        targetCal.set(Calendar.MILLISECOND, 0);
+        progressBar = (ProgressBar) findViewById(R.id.progressbar);
 
-        if(!date.equals("Today")) {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Events");
 
-            String[] dateparts = date.split("/");
-            targetCal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateparts[0]));
-            targetCal.set(Calendar.MONTH, Integer.parseInt(dateparts[1]));
-            targetCal.set(Calendar.YEAR, Integer.parseInt(dateparts[2]));
-        }
+        query.findInBackground(new FindCallback<ParseObject>() {
+            public void done(List<ParseObject> postList, ParseException e) {
+                if (e == null) {
+                    actionList.clear();
 
-        Intent intent = new Intent(getBaseContext(), AlarmReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                getBaseContext(), 1, intent, 0);
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, targetCal.getTimeInMillis(),
-                pendingIntent);
+                    Calendar calendar = Calendar.getInstance();
+
+                    for (ParseObject post : postList) {
+                        if(ParseUser.getCurrentUser().getUsername().equalsIgnoreCase(post.getString("Event_Owner"))) {
+
+                            String[] timeparts = post.getString("Time").split("h");
+                            Calendar taskCalendar = (Calendar) calendar.clone();
+                            taskCalendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(timeparts[0]));
+                            taskCalendar.set(Calendar.MINUTE, Integer.parseInt(timeparts[1]));
+                            taskCalendar.set(Calendar.SECOND, 0);
+                            taskCalendar.set(Calendar.MILLISECOND, 0);
+
+                            if(!post.getString("Date").equals("Today")) {
+
+                                String[] dateparts = post.getString("Date").split("/");
+                                taskCalendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateparts[0]));
+                                taskCalendar.set(Calendar.MONTH, Integer.parseInt(dateparts[1]));
+                                taskCalendar.set(Calendar.YEAR, Integer.parseInt(dateparts[2]));
+                            }
+
+                            if(taskCalendar.compareTo(calendar) <= 0) {
+
+
+                                TaskAction note = new TaskAction(post.getObjectId(), post.getString("Task"), post.getString("Date"), post.getString("Time"), R.mipmap.ic_action_expand);
+                                actionList.add(note);
+                            }
+
+
+                        }
+                    }
+
+                    progressBar.setVisibility(View.GONE);
+                    taskActionsAdapter = new TaskActionsAdapter(getApplicationContext(),actionList);
+                    mListView.setAdapter(taskActionsAdapter);
+
+                }
+            }
+        });
     }
-
 }
